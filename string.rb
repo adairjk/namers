@@ -8,11 +8,12 @@ class String
     words = self.split
     words.each do |word|
       if word.length > length
+        lines << "#{line}\\n" unless lines.empty?
         until word.length < length
           lines << "#{word.slice!(word[0..(length - 1)])}-\\n"
         end
         line = word
-      elsif word.length + line.length > length
+      elsif word.length + line.length + 1 > length
         lines << "#{line}\\n"
         line = word
       else
