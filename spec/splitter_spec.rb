@@ -16,4 +16,8 @@ describe('Splitter') do
     expect(some_string.splitter(10)).to eql 'Four score\nand seven\nyears ago'
   end
 
+  it('should hyphenate long words') do
+    expect('thisisareallylongword'.splitter(6)).to eql 'thisis-\nareall-\nylongw-\nord'
+  end
+
 end
