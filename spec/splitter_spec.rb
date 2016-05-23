@@ -6,7 +6,7 @@ describe(Splitter) do
   let(:splitter) {Splitter.new(some_string)}
 
   it('should store the string that is passed') do
-    expect(Splitter.new('foo').string).to eql "foo"
+    expect(splitter.instance_variable_get(:'@string')).to eql some_string
   end
 
   it('should return the string if less than the split length') do
@@ -22,15 +22,31 @@ describe(Splitter) do
   end
 
   it('should split words if longer than split length') do
-    expect(Splitter.new('xxx').split_lines(1)).to eql 'x\nx\nx'
+    splitter = Splitter.new('xxx')
+    splitter.instance_variable_set(:'@lines', [])
+    splitter.instance_variable_set(:'@line', [])
+    expect(splitter.split_lines(1)).to eql 'x\nx\nx'
   end
 
   it('should insert a new line between words') do
-    expect(Splitter.new('xxx xxx').split_lines(3)).to eql 'xxx\nxxx'
+    splitter = Splitter.new('xxx xxx')
+    splitter.instance_variable_set(:'@lines', [])
+    splitter.instance_variable_set(:'@line', [])
+    expect(splitter.split_lines(3)).to eql 'xxx\nxxx'
   end
 
   it('should insert a new line between words') do
-    expect(Splitter.new('x xxx').split_lines(3)).to eql 'x\nxxx'
+    splitter = Splitter.new('x xxx')
+    splitter.instance_variable_set(:'@lines', [])
+    splitter.instance_variable_set(:'@line', [])
+    expect(splitter.split_lines(3)).to eql 'x\nxxx'
+  end
+
+  it('should split long words within the phrase') do
+    splitter = Splitter.new('x xx')
+    splitter.instance_variable_set(:'@lines', [])
+    splitter.instance_variable_set(:'@line', [])
+    expect(splitter.split_lines(1)).to eql 'x\nx\nx'
   end
 
   describe('helper methods') do
@@ -39,44 +55,21 @@ describe(Splitter) do
 
     describe('split_word') do
       it('should split a word into lines up to the split length') do
-        splitter.line_length = 3
-        splitter.split_word('xxxxxxx')
-        expect(splitter.lines).to eql ['xxx', 'xxx']
+        splitter.instance_variable_set(:'@line_length', 3)
+        splitter.instance_variable_set(:'@lines', [])
+        splitter.instance_variable_set(:'@line', [])
+        splitter.send(:split_word, 'xxxxxxx')
+        expect(splitter.instance_variable_get(:'@lines')).to eql ['xxx', 'xxx']
       end
 
-      it('should put remaining letters in the current line') do
-        splitter.line_length = 3
-        splitter.split_word('xxxxxxx')
-        expect(splitter.line).to eql ['x']
+      it('should return remaining letters') do
+        splitter.instance_variable_set(:'@line_length', 3)
+        splitter.instance_variable_set(:'@lines', [])
+        splitter.instance_variable_set(:'@line', [])
+        expect(splitter.send(:split_word, 'xxxxxxx')).to eql 'x'
       end
     end
 
   end
-
-  describe('oscars tests') do
-
-    it { expect(Splitter.new(nil).split_lines(1)).to eql('') }
-    it { expect(Splitter.new('').split_lines(1)).to eql('') }
-    it { expect(Splitter.new('x').split_lines(1)).to eql('x') }
-    it { expect(Splitter.new('xx').split_lines(1)).to eql('x\nx') }
-    it { expect(Splitter.new('xxx').split_lines(1)).to eql('x\nx\nx') }
-    it { expect(Splitter.new('x xx').split_lines(1)).to eql('x\nx\nx') }
-
-  end
-
-
-  # it('line length should be no longer than requested length') do
-  #   expect(some_string.splitter(14)).to eql "Four score and\nseven years\nago"
-  # end
-  #
-  # it('it should not break a string') do
-  #   expect(some_string.splitter(17)).to eql "Four score and\nseven years ago"
-  # end
-  #
-  # it('should break multiple lines') do
-  #   expect(some_string.splitter(10)).to eql "Four score\nand seven\nyears ago"
-  # end
-  #
-
 
 end
