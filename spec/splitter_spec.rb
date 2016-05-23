@@ -24,4 +24,11 @@ describe('Splitter') do
     expect('this is a really long and intricateing sample'.splitter(10)).to eql 'this is a\nreally\nlong and\nintricatei-\nng sample'
   end
 
+  it { expect(''.splitter(1)).to eql('') }
+  it { expect(nil.splitter(1)).to eql('') }
+  it { expect('x'.splitter(1)).to eql('x') }
+  it { expect('xx'.splitter(1)).to eql("x\nx") }
+  it { expect('xxx'.splitter(1)).to eql("x\nx\nx") }
+  it { expect('x xx'.splitter(3)).to eql("x\nxx") }
+
 end
