@@ -49,6 +49,11 @@ describe(Splitter) do
     expect(splitter.split_lines(1)).to eql 'x\nx\nx'
   end
 
+  it('should handle a larger sample') do
+    splitter = Splitter.new('these are some longer words and phrases')
+    expect(splitter.split_lines(10)).to eql 'these are\nsome\nlonger\nwords and\nphrases'
+  end
+
   describe('helper methods') do
 
     let(:splitter) { Splitter.new('xxxxxxx')}
@@ -67,6 +72,31 @@ describe(Splitter) do
         splitter.lines = []
         splitter.line = []
         expect(splitter.send(:split_word, 'xxxxxxx')).to eql 'x'
+      end
+    end
+
+    describe('word_fits_on_line?') do
+      it('should return true if the word fits on the line') do
+        splitter.line = []
+        splitter.line_length = 10
+        expect(splitter.send(:word_fits_on_line?, 'xxxxx')).to be true
+      end
+
+      it('should return false if the word is too long to fit on the line') do
+        splitter.line = []
+        splitter.line_length = 3
+        expect(splitter.send(:word_fits_on_line?, 'xxxxx')).to be false
+      end
+    end
+
+    describe('build_lines') do
+      it('should build an array of lines') do
+        splitter.lines = []
+        splitter.line = []
+        splitter.line_length = 10
+        splitter.instance_variable_set(:'@words', (%w(these are some words)))
+        splitter.send(:build_lines)
+        expect(splitter.lines).to eql ['these are', 'some words']
       end
     end
 

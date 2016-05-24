@@ -31,13 +31,18 @@ class Splitter
 
   def build_lines
     @words.each do |word|
-      if @line.join.length + word.length > @line_length
-        @lines << @line.join
-        @line = [split_word(word)].reject { |w| w.empty? }
-      else
+      if word_fits_on_line?(word)
         @line << word
+      else
+        @lines << @line.join(' ')
+        @line = [split_word(word)].reject { |w| w.empty? }
       end
     end
+    @lines << @line.join(' ')
+  end
+
+  def word_fits_on_line?(word)
+    @line.join.length + word.length < @line_length
   end
 
 end
