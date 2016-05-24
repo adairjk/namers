@@ -16,7 +16,6 @@ class Splitter
     return '' if @string.nil?
     return @string if @string.length <= line_length
     build_lines
-    @lines.reject! { |w| w.empty? }
     @lines.join('\n')
   end
 
@@ -39,6 +38,7 @@ class Splitter
       end
     end
     @lines << @line.join(' ')
+    @lines.reject! { |w| w.empty? }
   end
 
   def word_fits_on_line?(word)
